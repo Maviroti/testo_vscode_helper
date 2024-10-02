@@ -1,7 +1,8 @@
 {
   "name": "testo-vscode-helper",
   "displayName": "Testo VScode Helper",
-  "description": "",
+  "publisher": "Zivert",
+  "description": "Расширение для удобного перемещения по макросам. ",
   "version": "1.0.0",
   "engines": {
     "vscode": "^1.93.0"
@@ -27,7 +28,7 @@
           "when": "editorTextFocus",
           "group": "navigation" 
       }]}
-},
+  },
   "devDependencies": {
     "@types/vscode": "^1.93.0",
     "@types/mocha": "^10.0.8",
@@ -35,5 +36,11 @@
     "eslint": "^9.11.1",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Maviroti/testo_vscode_helper"
   }
+
+  
 }
