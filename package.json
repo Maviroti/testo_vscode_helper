@@ -1,0 +1,39 @@
+{
+  "name": "testo-vscode-helper",
+  "displayName": "Testo VScode Helper",
+  "description": "",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [{
+        "command": "TestoVscodeHelper.goToMacroDefinition",
+        "title": "Перейти к определению макроса"
+    }],
+    "keybindings": [{
+        "command": "TestoVscodeHelper.goToMacroDefinition",
+        "key": "F12",
+        "when": "editorTextFocus"
+    }],
+    "menus": {
+      "editor/context": [{
+          "command": "TestoVscodeHelper.goToMacroDefinition",
+          "when": "editorTextFocus",
+          "group": "navigation" 
+      }]}
+},
+  "devDependencies": {
+    "@types/vscode": "^1.93.0",
+    "@types/mocha": "^10.0.8",
+    "@types/node": "20.x",
+    "eslint": "^9.11.1",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}
