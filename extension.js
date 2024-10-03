@@ -53,53 +53,7 @@ function activate(context) {
 
         // Если найдены определения макроса
         if (macroPositions.length > 0) {
-            if (macroPositions.length === 1) {
-                // Если найдено только одно определение, проверяем, находится ли оно в том же файле
-                const { filePath } = macroPositions[0];
-                if (filePath === editor.document.fileName) {
-                    // Вызываем новую функцию для перехода в том же файле
-                    await goToMacroDefinitionInSameFile(macroPositions[0], editor);
-                } else {
-                    // Если найдено только одно определение в другом файле
-                    const document = await vscode.workspace.openTextDocument(filePath);
-                    await vscode.window.showTextDocument(document);
-
-                    const activeEditor = vscode.window.activeTextEditor;
-                    if (activeEditor) {
-                        activeEditor.selection = new vscode.Selection(macroPositions[0].position, macroPositions[0].position);
-                        activeEditor.revealRange(new vscode.Range(macroPositions[0].position, macroPositions[0].position));
-                    }
-                }
-            } else {
-                // Если найдено несколько определений, показываем меню выбора
-                const items = macroPositions.map((macro) => ({
-                    label: `${path.basename(macro.filePath)} (строка ${macro.position.line + 1})`,
-                    description: macro.filePath,
-                    position: macro.position,
-                    filePath: macro.filePath
-                }));
-
-                const selectedItem = await vscode.window.showQuickPick(items, {
-                    placeHolder: 'Выберите файл'
-                });
-
-                if (selectedItem) {
-                    if (selectedItem.filePath === editor.document.fileName) {
-                        // Вызываем новую функцию для перехода в том же файле
-                        await goToMacroDefinitionInSameFile(selectedItem, editor);
-                    } else {
-                        // Если выбран элемент, открываем файл и перемещаем курсор
-                        const document = await vscode.workspace.openTextDocument(selectedItem.filePath);
-                        await vscode.window.showTextDocument(document);
-                        
-                        const activeEditor = vscode.window.activeTextEditor;
-                        if (activeEditor) {
-                            activeEditor.selection = new vscode.Selection(selectedItem.position, selectedItem.position);
-                            activeEditor.revealRange(new vscode.Range(selectedItem.position, selectedItem.position));
-                        }
-                    }
-                }
-            }
+            await handleMacroPositions(macroPositions, editor, selectedText);
         } else {
             // Если макрос не найден в любом из файлов
             vscode.window.showInformationMessage(`Определение макроса "${selectedText}" не найдено.`);
@@ -107,6 +61,51 @@ function activate(context) {
     });
 
     context.subscriptions.push(disposable);
+}
+
+// Функция для обработки найденных позиций макросов
+async function handleMacroPositions(macroPositions, editor, selectedText) {
+    if (macroPositions.length === 1) {
+        const { filePath } = macroPositions[0];
+        
+        if (filePath === editor.document.fileName) {
+            await goToMacroDefinitionInSameFile(macroPositions[0], editor);
+        } else {
+            await openDocumentAndSelect(macroPositions[0]);
+        }
+    } else {
+        // Если найдено несколько определений, показываем меню выбора
+        const items = macroPositions.map((macro) => ({
+            label: `${path.basename(macro.filePath)} (строка ${macro.position.line + 1})`,
+            description: macro.filePath,
+            position: macro.position,
+            filePath: macro.filePath
+        }));
+
+        const selectedItem = await vscode.window.showQuickPick(items, {
+            placeHolder: 'Выберите файл'
+        });
+
+        if (selectedItem) {
+            if (selectedItem.filePath === editor.document.fileName) {
+                await goToMacroDefinitionInSameFile(selectedItem, editor);
+            } else {
+                await openDocumentAndSelect(selectedItem);
+            }
+        }
+    }
+}
+
+// Функция для открытия документа и перемещения курсора
+async function openDocumentAndSelect(macroPosition) {
+    const document = await vscode.workspace.openTextDocument(macroPosition.filePath);
+    await vscode.window.showTextDocument(document);
+    
+    const activeEditor = vscode.window.activeTextEditor;
+    if (activeEditor) {
+        activeEditor.selection = new vscode.Selection(macroPosition.position, macroPosition.position);
+        activeEditor.revealRange(new vscode.Range(macroPosition.position, macroPosition.position));
+    }
 }
 
 // Функция для поиска всех файлов в рабочем пространстве
@@ -141,21 +140,15 @@ async function goToMacroDefinitionInSameFile(macroPosition, editor) {
         newEditor.selection = new vscode.Selection(position, position);
         newEditor.revealRange(new vscode.Range(position, position));
     } else {
-        // Если открыто несколько редакторов, проверяем текущий редактор
-        const currentEditorIndex = editors.findIndex(ed => ed.document.uri.toString() === editor.document.uri.toString());
-        // Определяем индекс соседнего редактора
-        const nextEditorIndex = (currentEditorIndex + 1) % editors.length; // Переход к следующему редактору по кругу
-        const nextEditor = editors[nextEditorIndex];
-
-        // Перемещаем курсор в соседнем редакторе
-        nextEditor.selection = new vscode.Selection(position, position);
-        nextEditor.revealRange(new vscode.Range(position, position));
-    }
+       // Если открыто несколько редакторов, перемещаем курсор в текущем редакторе
+       editor.selection = new vscode.Selection(position, position);
+       editor.revealRange(new vscode.Range(position, position));
+   }
 }
 
 function deactivate() {}
 
 module.exports = {
-    activate,
-    deactivate
+   activate,
+   deactivate
 };

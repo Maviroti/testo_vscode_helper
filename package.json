@@ -3,7 +3,8 @@
   "displayName": "Testo VScode Helper",
   "publisher": "Zivert",
   "description": "Расширение для удобного перемещения по макросам. ",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "icon": "img/icon.png",
   "engines": {
     "vscode": "^1.93.0"
   },
