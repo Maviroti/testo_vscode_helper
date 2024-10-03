@@ -31,7 +31,7 @@ function activate(context) {
 
         // Поиск всех файлов в рабочем пространстве
         const macroFilePaths = await findMacroFiles(workspaceFolder);
-        let macroPosition = null;
+        let macroPositions = [];
 
         // Проверка каждого файла на наличие макроса
         for (const filePath of macroFilePaths) {
@@ -44,25 +44,66 @@ function activate(context) {
                 const macroStartIndex = match.index;
                 const macroLine = document.positionAt(macroStartIndex).line;
 
-                macroPosition = new vscode.Position(macroLine, 0);
-                break; // Находим только первое вхождение
-            }
-
-            if (macroPosition) {
-                
-                // Если найдено определение макроса, перемещаем курсор
-                await vscode.window.showTextDocument(document);
-                const editor = vscode.window.activeTextEditor;
-                if (editor) {
-                    editor.selection = new vscode.Selection(macroPosition, macroPosition);
-                    editor.revealRange(new vscode.Range(macroPosition, macroPosition));
-                }
-                return; // Завершаем выполнение после нахождения первого макроса
+                macroPositions.push({
+                    filePath: filePath,
+                    position: new vscode.Position(macroLine, 0)
+                });
             }
         }
 
-        // Если макрос не найден в любом из файлов
-        vscode.window.showInformationMessage(`Определение макроса "${selectedText}" не найдено.`);
+        // Если найдены определения макроса
+        if (macroPositions.length > 0) {
+            if (macroPositions.length === 1) {
+                // Если найдено только одно определение, проверяем, находится ли оно в том же файле
+                const { filePath } = macroPositions[0];
+                if (filePath === editor.document.fileName) {
+                    // Вызываем новую функцию для перехода в том же файле
+                    await goToMacroDefinitionInSameFile(macroPositions[0], editor);
+                } else {
+                    // Если найдено только одно определение в другом файле
+                    const document = await vscode.workspace.openTextDocument(filePath);
+                    await vscode.window.showTextDocument(document);
+
+                    const activeEditor = vscode.window.activeTextEditor;
+                    if (activeEditor) {
+                        activeEditor.selection = new vscode.Selection(macroPositions[0].position, macroPositions[0].position);
+                        activeEditor.revealRange(new vscode.Range(macroPositions[0].position, macroPositions[0].position));
+                    }
+                }
+            } else {
+                // Если найдено несколько определений, показываем меню выбора
+                const items = macroPositions.map((macro) => ({
+                    label: `${path.basename(macro.filePath)} (строка ${macro.position.line + 1})`,
+                    description: macro.filePath,
+                    position: macro.position,
+                    filePath: macro.filePath
+                }));
+
+                const selectedItem = await vscode.window.showQuickPick(items, {
+                    placeHolder: 'Выберите файл'
+                });
+
+                if (selectedItem) {
+                    if (selectedItem.filePath === editor.document.fileName) {
+                        // Вызываем новую функцию для перехода в том же файле
+                        await goToMacroDefinitionInSameFile(selectedItem, editor);
+                    } else {
+                        // Если выбран элемент, открываем файл и перемещаем курсор
+                        const document = await vscode.workspace.openTextDocument(selectedItem.filePath);
+                        await vscode.window.showTextDocument(document);
+                        
+                        const activeEditor = vscode.window.activeTextEditor;
+                        if (activeEditor) {
+                            activeEditor.selection = new vscode.Selection(selectedItem.position, selectedItem.position);
+                            activeEditor.revealRange(new vscode.Range(selectedItem.position, selectedItem.position));
+                        }
+                    }
+                }
+            }
+        } else {
+            // Если макрос не найден в любом из файлов
+            vscode.window.showInformationMessage(`Определение макроса "${selectedText}" не найдено.`);
+        }
     });
 
     context.subscriptions.push(disposable);
@@ -85,6 +126,31 @@ async function findMacroFiles(dir) {
     }
 
     return results;
+}
+
+// Функция для перехода к единственному определению макроса в том же файле
+async function goToMacroDefinitionInSameFile(macroPosition, editor) {
+    const { position } = macroPosition;
+
+    // Получаем список всех открытых редакторов
+    const editors = vscode.window.visibleTextEditors;
+
+    if (editors.length === 1) {
+        // Если открыт только один редактор, создаем новый и переносим курсор
+        const newEditor = await vscode.window.showTextDocument(editor.document, { viewColumn: vscode.ViewColumn.Beside });
+        newEditor.selection = new vscode.Selection(position, position);
+        newEditor.revealRange(new vscode.Range(position, position));
+    } else {
+        // Если открыто несколько редакторов, проверяем текущий редактор
+        const currentEditorIndex = editors.findIndex(ed => ed.document.uri.toString() === editor.document.uri.toString());
+        // Определяем индекс соседнего редактора
+        const nextEditorIndex = (currentEditorIndex + 1) % editors.length; // Переход к следующему редактору по кругу
+        const nextEditor = editors[nextEditorIndex];
+
+        // Перемещаем курсор в соседнем редакторе
+        nextEditor.selection = new vscode.Selection(position, position);
+        nextEditor.revealRange(new vscode.Range(position, position));
+    }
 }
 
 function deactivate() {}
