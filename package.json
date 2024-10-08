@@ -28,7 +28,18 @@
           "command": "TestoVscodeHelper.goToMacroDefinition",
           "when": "editorTextFocus",
           "group": "navigation" 
-      }]}
+      }]},
+    "languages": [{
+        "id": "testo",
+        "aliases": ["Testo Lang", "testo"],
+        "extensions": [".testo"],
+        "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+        "language": "testo",
+        "scopeName": "source.testo",
+        "path": "./syntaxes/testo.tmLanguage.json"
+    }]
   },
   "devDependencies": {
     "@types/vscode": "^1.93.0",

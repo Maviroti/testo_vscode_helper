@@ -1,0 +1,312 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Testo Lang",
+	"patterns": [
+		{
+			"include": "#multiline_string"
+		},
+		{
+			"include": "#string"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#mouse"
+		},
+		{
+			"include": "#numbers"
+		},
+		{
+			"include": "#bools"
+		},
+		{
+			"include": "#time_intervals"
+		},
+		{
+			"include": "#size_specifiers"
+		},
+		{
+			"include": "#controllers"
+		},
+		{
+			"include": "#param"
+		},
+		{
+			"include": "#actions"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#ops"
+		},
+		{
+			"include": "#comparisons"
+		},
+		{
+			"include": "#test"
+		},
+		{
+			"include": "#macro"
+		}
+	],
+	"repository": {
+		"macro": {
+			"name": "meta.head.testo",
+			"begin": "\\b(macro)\\b ([A-Za-z_][A-Za-z_0-9]*)",
+			"beginCaptures": {
+				"1": {
+					"name": "storage.type.testo"
+				},
+				"2": {
+					"name": "entity.name.type.testo"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#numbers"
+				},
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#time_intervals"
+				},
+				{
+					"include": "#size_specifiers"
+				},
+				{
+					"name": "variable",
+					"match": "[A-Za-z_][A-Za-z_0-9]*"
+				}
+			],
+			"end": "{"
+		},
+		"var_refs": {
+			"patterns": [
+				{
+					"match": "(\\${)([A-Za-z_][A-Za-z_0-9]*)(})",
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.template-expression.begin"
+						},
+						"2": {
+							"name": "variable"
+						},
+						"3": {
+							"name": "punctuation.definition.template-expression.end"
+						}
+					}
+				},
+				{
+					"match": "(\\$<)([A-Za-z_][A-Za-z_0-9]*)(>)",
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.template-expression.begin"
+						},
+						"2": {
+							"name": "variable"
+						},
+						"3": {
+							"name": "punctuation.definition.template-expression.end"
+						}
+					}
+				}
+			]
+		},
+		"test": {
+			"name": "meta.head.testo",
+			"begin": "\\btest\\b",
+			"beginCaptures": {
+				"0": {
+					"name": "storage.type.testo"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#identitier"
+				}
+			],
+			"end": "{"
+		},
+		"identitier": {
+			"patterns": [
+				{
+					"name": "entity.name.type.testo",
+					"match": "[A-Za-z_][A-Za-z_0-9]*"
+				}
+			]
+		},
+		"numbers": {
+			"patterns": [
+				{
+					"name": "constant.numeric.testo",
+					"match": "\\b[0-9.]+\\b"
+				}
+			]
+		},
+		"bools": {
+			"patterns": [
+				{
+					"name": "constant.language.testo",
+					"match": "\\b(true|false)\\b"
+				}
+			]
+		},
+		"time_intervals": {
+			"patterns": [
+				{
+					"name": "keyword.other.unit.testo",
+					"match": "\\b[0-9.]+(s|m|h|ms)\\b"
+				}
+			]
+		},
+		"size_specifiers": {
+			"patterns": [
+				{
+					"name": "keyword.other.unit.testo",
+					"match": "\\b[0-9.]+[K,M,G]b\\b"
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.testo",
+					"begin": "#",
+					"end": "\\n"
+				},
+				{
+					"name": "comment.block.testo",
+					"begin": "/\\*",
+					"end": "\\*/"
+				}
+			]
+		},
+		"controllers": {
+			"name": "meta.head.testo",
+			"begin": "\\b(machine|flash|network)\\b",
+			"beginCaptures": {
+				"0": {
+					"name": "storage.type.testo"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#identitier"
+				}
+			],
+			"end": "{"
+		},
+		"param": {
+			"name": "meta.head.testo",
+			"patterns": [
+				{
+					"match": "\\b(param)\\b ([A-Za-z_][A-Za-z_0-9]*)",
+					"captures": {
+						"1": {
+							"name": "storage.type.testo"
+						},
+						"2": {
+							"name": "entity.name.type.testo"
+						}
+					}
+				},
+				{
+					"name": "storage.type.testo",
+					"match": "\\bparam\\b "
+				}
+			]
+		},
+		"mouse": {
+			"patterns": [
+				{
+					"match": "\\b(mouse)\\b \\b(click|lclick|rclick|dclick|hold|release)\\b",
+					"captures": {
+						"1": {
+							"name": "keyword.other.operator.testo"
+						},
+						"2": {
+							"name": "meta.donothighlight.testo"
+						}
+					}
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.conditional.testo",
+					"match": "\\b(if|else|continue|break|for)\\b"
+				},
+				{
+					"name": "keyword.control.include.testo",
+					"match": "\\binclude\\b"
+				}
+			]
+		},
+		"actions": {
+			"patterns": [
+				{
+					"name": "keyword.other.operator.testo",
+					"match": "\\b(type|wait|press|plug flash|unplug flash|plug|unplug|start|stop|exec|copyto|copyfrom|shutdown|print|abort|mouse|sleep|hold|release|screenshot)\\b"
+				}
+			]
+		},
+		"comparisons": {
+			"patterns": [
+				{
+					"name": "support.function",
+					"match": "\\b(EQUAL|LESS|GREATER|STREQUAL|STRGREATER|STRLESS|RANGE|IN|DEFINED)\\b"
+				}
+			]
+		},
+		"ops": {
+			"patterns": [
+				{
+					"name": "support.function",
+					"match": "\\b(NOT|AND|OR|check)\\b"
+				}
+			]
+		},
+		"string": {
+			"name": "string.quoted.double.testo",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.testo",
+					"match": "\\\\."
+				},
+				{
+					"include": "#var_refs"
+				}
+			]
+		},
+		"multiline_string": {
+			"name": "string.quoted.tripple.testo",
+			"begin": "\"\"\"",
+			"end": "\"\"\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.testo",
+					"match": "\\\\."
+				},
+				{
+					"include": "#var_refs"
+				}
+			]
+		}
+	},
+	"scopeName": "source.testo"
+}
