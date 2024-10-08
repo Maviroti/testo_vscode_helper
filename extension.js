@@ -32,12 +32,14 @@ function activate(context) {
         // Поиск всех файлов в рабочем пространстве
         const macroFilePaths = await findMacroFiles(workspaceFolder);
         let macroPositions = [];
+        let paramPositions = [];
 
         // Проверка каждого файла на наличие макроса
         for (const filePath of macroFilePaths) {
             const document = await vscode.workspace.openTextDocument(filePath);
             const text = document.getText();
             const macroPattern = new RegExp(`^[ \\t]*macro\\s+${selectedText}\\s*\\(([^)]*)\\)\\s*{?`, 'gm');
+            const paramPattern = new RegExp(`^[ \\t]*param\\s+${selectedText}\\s+.*`, 'gm');
             
             let match;
             while ((match = macroPattern.exec(text)) !== null) {
@@ -49,33 +51,70 @@ function activate(context) {
                     position: new vscode.Position(macroLine, 0)
                 });
             }
+
+            while ((match = paramPattern.exec(text)) !== null) {
+                const paramStartIndex = match.index;
+                const paramLine = document.positionAt(paramStartIndex).line;
+
+                paramPositions.push({
+                    filePath: filePath,
+                    position: new vscode.Position(paramLine, 0)
+                });
+            }
         }
 
         // Если найдены определения макроса
-        if (macroPositions.length > 0) {
-            await handleMacroPositions(macroPositions, editor, selectedText);
-        } else {
+        if (macroPositions.length > 0 && paramPositions.length === 0) {
+            await handlePositions(macroPositions, editor, selectedText);
+        } else if (macroPositions.length === 0 && paramPositions.length > 0) {
+            await handlePositions(paramPositions, editor, selectedText);
+        } else if (macroPositions.length > 0 && paramPositions.length > 0){
+            // Eсли есть одноимённый параметр и макрос, показываем меню выбора
+            items = [
+                ({
+                    label: "Макрос",
+                    description: "Осуществить поиск по макросам"
+                }),
+                ({
+                    label: "Параметр",
+                    description: "Осуществить поиск по параметрам"
+                })
+            ]
+            const selectedItem = await vscode.window.showQuickPick(items, {
+                placeHolder: 'Выберите вариант поиска'
+            });
+    
+            if (selectedItem.label === "Макрос") {
+                await handlePositions(macroPositions, editor, selectedText);
+            } else if (selectedItem.label === "Параметр"){
+                await handlePositions(paramPositions, editor, selectedText);
+            }
+        } else if (macroPositions.length === 0 && paramPositions.length === 0){
             // Если макрос не найден в любом из файлов
-            vscode.window.showInformationMessage(`Определение макроса "${selectedText}" не найдено.`);
+            vscode.window.showInformationMessage(`Определение "${selectedText}" не найдено.`);
+        } else {
+            console.log("ERR что-то пошло не так")
+            console.log("macroPositions.length = ", macroPositions.length)
+            console.log("paramPositions.length  = ", paramPositions.length )
         }
     });
 
     context.subscriptions.push(disposable);
 }
 
-// Функция для обработки найденных позиций макросов
-async function handleMacroPositions(macroPositions, editor, selectedText) {
-    if (macroPositions.length === 1) {
-        const { filePath } = macroPositions[0];
+// Функция для обработки найденных позиций
+async function handlePositions(positions, editor, selectedText) {
+    if (positions.length === 1) {
+        const { filePath } = positions[0];
         
         if (filePath === editor.document.fileName) {
-            await goToMacroDefinitionInSameFile(macroPositions[0], editor);
+            await goToMacroDefinitionInSameFile(positions[0], editor);
         } else {
-            await openDocumentAndSelect(macroPositions[0]);
+            await openDocumentAndSelect(positions[0]);
         }
     } else {
-        // Если найдено несколько определений, показываем меню выбора
-        const items = macroPositions.map((macro) => ({
+            // Если найдено несколько определений, показываем меню выбора
+        const items = positions.map((macro) => ({
             label: `${path.basename(macro.filePath)} (строка ${macro.position.line + 1})`,
             description: macro.filePath,
             position: macro.position,

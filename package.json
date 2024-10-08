@@ -2,8 +2,8 @@
   "name": "testo-vscode-helper",
   "displayName": "Testo VScode Helper",
   "publisher": "Zivert",
-  "description": "Расширение для удобного перемещения по макросам. ",
-  "version": "2.0.1",
+  "description": "Расширение для удобной работы с Testo-lang.",
+  "version": "2.1.0",
   "icon": "img/icon.png",
   "engines": {
     "vscode": "^1.93.0"
@@ -16,7 +16,7 @@
   "contributes": {
     "commands": [{
         "command": "TestoVscodeHelper.goToMacroDefinition",
-        "title": "Перейти к определению макроса"
+        "title": "Testo: Перейти к определению"
     }],
     "keybindings": [{
         "command": "TestoVscodeHelper.goToMacroDefinition",
