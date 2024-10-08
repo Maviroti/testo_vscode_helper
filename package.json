@@ -4,6 +4,7 @@
   "publisher": "Zivert",
   "description": "Расширение для удобной работы с Testo-lang.",
   "version": "2.1.0",
+  "license": "MIT",
   "icon": "img/icon.png",
   "engines": {
     "vscode": "^1.93.0"
