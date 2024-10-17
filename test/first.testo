@@ -1,0 +1,10 @@
+macro testMacro2(par1, par2, par3){
+    sleep 2s
+}
+
+flash testFlash2 {
+    fs: "fat"
+	size: 1Gb
+}
+
+param testParam2 "132"

@@ -1,6 +1,6 @@
 # Testo VScode Helper
 ## Русский
-Расширение для удобного перемещения по макросам и параметрам.  
+Расширение для удобного перемещения по макросам, параметрам и флешкам.  
 Горячая клавиша по умолчанию Shift + F12
 
 Также расширение содержит подсветку кода Testo-lang.  
@@ -12,7 +12,7 @@
 ./syntaxes/testo.tmLanguage.json (с доработками)  
 
 ## English
-An extension for easy navigation through macros and parameters.  
+An extension for easy navigation through macros, parameters and flash drives.  
 The default hotkey is Shift + F12
 
 The extension also contains Testo-lang code highlighting.  

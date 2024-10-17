@@ -31,72 +31,96 @@ function activate(context) {
 
         // Поиск всех файлов в рабочем пространстве
         const macroFilePaths = await findMacroFiles(workspaceFolder);
-        let macroPositions = [];
-        let paramPositions = [];
+        let positions = {};
 
-        // Проверка каждого файла на наличие макроса
+        // Проверка каждого файла на наличие определений
         for (const filePath of macroFilePaths) {
             const document = await vscode.workspace.openTextDocument(filePath);
             const text = document.getText();
             const macroPattern = new RegExp(`^[ \\t]*macro\\s+${selectedText}\\s*\\(([^)]*)\\)\\s*{?`, 'gm');
             const paramPattern = new RegExp(`^[ \\t]*param\\s+${selectedText}\\s+.*`, 'gm');
+            const flashPattern = new RegExp(`^[ \\t]*flash\\s+${selectedText}\\s*{?`, 'gm');
             
             let match;
             while ((match = macroPattern.exec(text)) !== null) {
                 const macroStartIndex = match.index;
                 const macroLine = document.positionAt(macroStartIndex).line;
 
-                macroPositions.push({
+                macroPos = {
                     filePath: filePath,
                     position: new vscode.Position(macroLine, 0)
-                });
+                };
+
+                if (!positions.hasOwnProperty('Макрос')) {
+                    positions['Макрос'] = [];
+                };
+
+                positions['Макрос'].push(macroPos)
             }
 
             while ((match = paramPattern.exec(text)) !== null) {
                 const paramStartIndex = match.index;
                 const paramLine = document.positionAt(paramStartIndex).line;
 
-                paramPositions.push({
+                paramPos = {
                     filePath: filePath,
                     position: new vscode.Position(paramLine, 0)
-                });
+                };
+
+                if (!positions.hasOwnProperty('Параметр')) {
+                    positions['Параметр'] = [];
+                };
+
+                positions['Параметр'].push(paramPos)
+            }
+            
+            while ((match = flashPattern.exec(text)) !== null) {
+                const flashStartIndex = match.index;
+                const flashLine = document.positionAt(flashStartIndex).line;
+
+                flashPos = {
+                    filePath: filePath,
+                    position: new vscode.Position(flashLine, 0)
+                };
+
+                if (!positions.hasOwnProperty('Флешка')) {
+                    positions['Флешка'] = [];
+                };
+
+                positions['Флешка'].push(flashPos)
             }
         }
 
-        // Если найдены определения макроса
-        if (macroPositions.length > 0 && paramPositions.length === 0) {
-            await handlePositions(macroPositions, editor, selectedText);
-        } else if (macroPositions.length === 0 && paramPositions.length > 0) {
-            await handlePositions(paramPositions, editor, selectedText);
-        } else if (macroPositions.length > 0 && paramPositions.length > 0){
-            // Eсли есть одноимённый параметр и макрос, показываем меню выбора
-            items = [
-                ({
-                    label: "Макрос",
-                    description: "Осуществить поиск по макросам"
-                }),
-                ({
-                    label: "Параметр",
-                    description: "Осуществить поиск по параметрам"
-                })
-            ]
+        // Обработка найденный определений
+        types = Object.keys(positions);
+        if (types.length === 0){
+            // Если определение не найдено
+            vscode.window.showInformationMessage(`Определение "${selectedText}" не найдено.`);
+        } else if (types.length === 1){
+            // Если только один тип определений
+            await handlePositions(positions[types[0]], editor, selectedText);
+        }else {
+            // Если несколько типов определений
+            items = [];
+            for (const ttype of types){
+                items.push({
+                    label: ttype,
+                });
+            }
+
             const selectedItem = await vscode.window.showQuickPick(items, {
                 placeHolder: 'Выберите вариант поиска'
             });
-    
+
             if (selectedItem.label === "Макрос") {
-                await handlePositions(macroPositions, editor, selectedText);
+                await handlePositions(positions["Макрос"], editor, selectedText);
             } else if (selectedItem.label === "Параметр"){
-                await handlePositions(paramPositions, editor, selectedText);
+                await handlePositions(positions["Параметр"], editor, selectedText);
+            } else if (selectedItem.label === "Флешка"){
+                await handlePositions(positions["Флешка"], editor, selectedText);
             }
-        } else if (macroPositions.length === 0 && paramPositions.length === 0){
-            // Если макрос не найден в любом из файлов
-            vscode.window.showInformationMessage(`Определение "${selectedText}" не найдено.`);
-        } else {
-            console.log("ERR что-то пошло не так")
-            console.log("macroPositions.length = ", macroPositions.length)
-            console.log("paramPositions.length  = ", paramPositions.length )
-        }
+
+        };
     });
 
     context.subscriptions.push(disposable);
