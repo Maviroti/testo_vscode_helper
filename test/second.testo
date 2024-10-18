@@ -9,6 +9,10 @@ flash testFlash3 {
 
 param testParam3 "132"
 
+machine testVm3 {
+    
+}
+
 
 macro testName1(par1, par2, par3){
     sleep 2s
@@ -20,3 +24,8 @@ flash testName1 {
 }
 
 param testName1 "132"
+
+machine testName1 
+{
+    
+}

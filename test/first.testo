@@ -8,3 +8,7 @@ flash testFlash2 {
 }
 
 param testParam2 "132"
+
+machine testVm2 {
+    
+}

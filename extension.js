@@ -40,6 +40,7 @@ function activate(context) {
             const macroPattern = new RegExp(`^[ \\t]*macro\\s+${selectedText}\\s*\\(([^)]*)\\)\\s*{?`, 'gm');
             const paramPattern = new RegExp(`^[ \\t]*param\\s+${selectedText}\\s+.*`, 'gm');
             const flashPattern = new RegExp(`^[ \\t]*flash\\s+${selectedText}\\s*{?`, 'gm');
+            const machinePattern = new RegExp(`^[ \\t]*machine\\s+${selectedText}\\s*{?`, 'gm');
             
             let match;
             while ((match = macroPattern.exec(text)) !== null) {
@@ -89,6 +90,22 @@ function activate(context) {
 
                 positions['Флешка'].push(flashPos)
             }
+
+            while ((match = machinePattern.exec(text)) !== null) {
+                const machineStartIndex = match.index;
+                const machineLine = document.positionAt(machineStartIndex).line;
+
+                machinePos = {
+                    filePath: filePath,
+                    position: new vscode.Position(machineLine, 0)
+                };
+
+                if (!positions.hasOwnProperty('Машина')) {
+                    positions['Машина'] = [];
+                };
+
+                positions['Машина'].push(machinePos)
+            }
         }
 
         // Обработка найденный определений
@@ -118,6 +135,8 @@ function activate(context) {
                 await handlePositions(positions["Параметр"], editor, selectedText);
             } else if (selectedItem.label === "Флешка"){
                 await handlePositions(positions["Флешка"], editor, selectedText);
+            } else if (selectedItem.label === "Машина"){
+                await handlePositions(positions["Машина"], editor, selectedText);
             }
 
         };

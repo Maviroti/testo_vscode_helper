@@ -9,6 +9,10 @@ flash testFlash1 {
 
 param testParam1 "132"
 
+machine testVm1 {
+    
+}
+
 # Все определения в этом же файле
 # Проверить что окрывается второй редактор 
 # Проверить при открытом втором редакторе 
@@ -40,7 +44,7 @@ test tst3:tst2 {
 # Все определения дублируются в second.testo и third.testo
 # Все определения с одним именем
 test tst4:tst2 {
-    testVm4{
+    testName1{
         plug flash testName1
         testName1( "123", "!23", "${testName1}")
     }
