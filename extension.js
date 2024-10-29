@@ -41,6 +41,7 @@ function activate(context) {
             const paramPattern = new RegExp(`^[ \\t]*param\\s+${selectedText}\\s+.*`, 'gm');
             const flashPattern = new RegExp(`^[ \\t]*flash\\s+${selectedText}\\s*{?`, 'gm');
             const machinePattern = new RegExp(`^[ \\t]*machine\\s+${selectedText}\\s*{?`, 'gm');
+            const testPattern = new RegExp(`^[ \\t]*test\\s+${selectedText}\\s*(:\\s*[^{}]*)?\\s*{?`, 'gm');
             
             let match;
             while ((match = macroPattern.exec(text)) !== null) {
@@ -106,10 +107,26 @@ function activate(context) {
 
                 positions['Машина'].push(machinePos)
             }
+
+            while ((match = testPattern.exec(text)) !== null) {
+                const testStartIndex = match.index;
+                const testLine = document.positionAt(testStartIndex).line;
+
+                testPos = {
+                    filePath: filePath,
+                    position: new vscode.Position(testLine, 0)
+                };
+
+                if (!positions.hasOwnProperty('Тест')) {
+                    positions['Тест'] = [];
+                };
+
+                positions['Тест'].push(testPos)
+            }
         }
 
         // Обработка найденный определений
-        types = Object.keys(positions);
+        types = Object.keys(positions).sort();
         if (types.length === 0){
             // Если определение не найдено
             vscode.window.showInformationMessage(`Определение "${selectedText}" не найдено.`);
@@ -129,16 +146,7 @@ function activate(context) {
                 placeHolder: 'Выберите вариант поиска'
             });
 
-            if (selectedItem.label === "Макрос") {
-                await handlePositions(positions["Макрос"], editor, selectedText);
-            } else if (selectedItem.label === "Параметр"){
-                await handlePositions(positions["Параметр"], editor, selectedText);
-            } else if (selectedItem.label === "Флешка"){
-                await handlePositions(positions["Флешка"], editor, selectedText);
-            } else if (selectedItem.label === "Машина"){
-                await handlePositions(positions["Машина"], editor, selectedText);
-            }
-
+            await handlePositions(positions[selectedItem.label], editor, selectedText);
         };
     });
 

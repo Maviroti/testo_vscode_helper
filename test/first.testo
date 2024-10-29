@@ -12,3 +12,7 @@ param testParam2 "132"
 machine testVm2 {
     
 }
+
+test tstTest2 {
+    
+}

@@ -27,3 +27,12 @@ param testName1 "132"
 machine testName1{
     
 }
+
+ test  tstTest3:  tstTest2 
+ {
+    
+ }
+
+    test testName1:tstTest2     {
+    
+}

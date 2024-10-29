@@ -6,6 +6,7 @@
   - Макроса
   - Флешки
   - Параметра
+  - Теста
 
 Горячая клавиша по умолчанию Shift + F12
 
@@ -24,6 +25,7 @@ Convenient navigation to the definition of:
   - Macro
   - Flash drives
   - Parameter
+  - Test
 
 The default hotkey is Shift + F12
 

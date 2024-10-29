@@ -25,7 +25,7 @@ test tst1 {
 }
 
 # Все определения в first.testo
-test tst2: tst1 {
+test tst2: tst1, tstTest2 {
     testVm2{
         plug flash testFlash2
         testMacro2( "123", "!23", "${testParam2}")
@@ -34,7 +34,7 @@ test tst2: tst1 {
 
 # Все определения дублируются в second.testo и third.testo
 # Проверить переход на каждый из двух файлов
-test tst3:tst2 {
+test tst3:tst2, tstTest3 {
     testVm3{
         plug flash testFlash3
         testMacro3( "123", "!23", "${testParam3}")
@@ -43,7 +43,7 @@ test tst3:tst2 {
 
 # Все определения дублируются в second.testo и third.testo
 # Все определения с одним именем
-test tst4:tst2 {
+test tst4:tst3, testName1 {
     testName1{
         plug flash testName1
         testName1( "123", "!23", "${testName1}")
