@@ -1,0 +1,38 @@
+{
+    "Шаблон нажатия Alt+F*": {
+        "prefix": [
+            "altF"
+        ],
+        "body": [
+            "hold LEFTALT; press F${1:4}; release LEFTALT"
+        ],
+        "description": "Подставляет шаблонную конструкцию нажатия клавиш Alt + F*"
+    },
+    "Шаблон нажатия Alt+Tab": {
+        "prefix": [
+            "altT"
+        ],
+        "body": [
+            "hold LEFTALT; press TAB; release LEFTALT"
+        ],
+        "description": "Подставляет шаблонную конструкцию нажатия клавиш Alt + Tab"
+    },
+    "Шаблон нажатия Win+R": {
+        "prefix": [
+            "winR"
+        ],
+        "body": [
+            "hold LEFTMETA; press R; release LEFTMETA"
+        ],
+        "description": "Подставляет шаблонную конструкцию нажатия клавиш Win + R"
+    },
+    "Шаблон нажатия Win+D": {
+        "prefix": [
+            "winD"
+        ],
+        "body": [
+            "hold LEFTMETA; press D; release LEFTMETA"
+        ],
+        "description": "Подставляет шаблонную конструкцию нажатия клавиш Win + D"
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "Шаблон ПКМ по координатам": {
+        "prefix": [
+            "mrc"
+        ],
+        "body": [
+            "mouse rclick ${1:0} ${2:0}"
+        ],
+        "description": "Подставляет шаблонную конструкцию для mouse rclick по координатам"
+    },
+    "Шаблон ПКМ по тексту": {
+        "prefix": [
+            "mrc\""
+        ],
+        "body": [
+            "mouse rclick \"${1:Text}\""
+        ],
+        "description": "Подставляет шаблонную конструкцию для mouse rclick по тексту"
+    },
+    "Шаблон ПКМ по изображению": {
+        "prefix": [
+            "mrci"
+        ],
+        "body": [
+            "mouse rclick img \"${1:IMG path}\""
+        ],
+        "description": "Подставляет шаблонную конструкцию для mouse rclick по изображению"
+    }
+}

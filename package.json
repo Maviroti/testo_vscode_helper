@@ -1,59 +1,107 @@
 {
-  "name": "testo-vscode-helper",
-  "displayName": "Testo VScode Helper",
-  "publisher": "Zivert",
-  "description": "Расширение для удобной работы с Testo-lang.",
-  "version": "2.4.0",
-  "license": "MIT",
-  "icon": "img/icon.png",
-  "engines": {
-    "vscode": "^1.93.0"
-  },
-  "categories": [
-    "Programming Languages"
-  ],
-  "activationEvents": [],
-  "main": "./extension.js",
-  "contributes": {
-    "commands": [{
-        "command": "TestoVscodeHelper.goToMacroDefinition",
-        "title": "Testo: Перейти к определению"
-    }],
-    "keybindings": [{
-        "command": "TestoVscodeHelper.goToMacroDefinition",
-        "key": "Shift+F12",
-        "when": "editorTextFocus"
-    }],
-    "menus": {
-      "editor/context": [{
-          "command": "TestoVscodeHelper.goToMacroDefinition",
-          "when": "editorTextFocus",
-          "group": "navigation" 
-      }]},
-    "languages": [{
-        "id": "testo",
-        "aliases": ["Testo Lang", "testo"],
-        "extensions": [".testo"],
-        "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-        "language": "testo",
-        "scopeName": "source.testo",
-        "path": "./syntaxes/testo.tmLanguage.json"
-    }]
-  },
-  "devDependencies": {
-    "@types/vscode": "^1.93.0",
-    "@types/mocha": "^10.0.8",
-    "@types/node": "20.x",
-    "eslint": "^9.11.1",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Maviroti/testo_vscode_helper"
-  }
-
-  
+    "name": "testo-vscode-helper",
+    "displayName": "Testo VScode Helper",
+    "publisher": "Zivert",
+    "description": "Расширение для удобной работы с Testo-lang.",
+    "version": "2.5.0",
+    "license": "MIT",
+    "icon": "img/icon.png",
+    "engines": {
+        "vscode": "^1.93.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "activationEvents": [],
+    "main": "./extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "TestoVscodeHelper.goToMacroDefinition",
+                "title": "Testo: Перейти к определению"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "TestoVscodeHelper.goToMacroDefinition",
+                "key": "Shift+F12",
+                "when": "editorTextFocus"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "TestoVscodeHelper.goToMacroDefinition",
+                    "when": "editorTextFocus",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "languages": [
+            {
+                "id": "testo",
+                "aliases": [
+                    "Testo Lang",
+                    "testo"
+                ],
+                "extensions": [
+                    ".testo"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "testo",
+                "scopeName": "source.testo",
+                "path": "./syntaxes/testo.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "testo",
+                "path": "./snippets/for.json"
+            },
+            {
+                "language": "testo",
+                "path": "./snippets/if.json"
+            },
+            {
+                "language": "testo",
+                "path": "./snippets/keyboard_shortcuts.json"
+            },
+            {
+                "language": "testo",
+                "path": "./snippets/mouse_click.json"
+            },
+            {
+                "language": "testo",
+                "path": "./snippets/mouse_dclick.json"
+            },
+            {
+                "language": "testo",
+                "path": "./snippets/mouse_rclick.json"
+            },
+            {
+                "language": "testo",
+                "path": "./snippets/mouse_move.json"
+            },
+            {
+                "language": "testo",
+                "path": "./snippets/wait.json"
+            }
+        ]
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.93.0",
+        "@types/mocha": "^10.0.8",
+        "@types/node": "20.x",
+        "eslint": "^9.11.1",
+        "@vscode/test-cli": "^0.0.10",
+        "@vscode/test-electron": "^2.4.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Maviroti/testo_vscode_helper"
+    }
 }
